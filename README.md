@@ -2,11 +2,9 @@
 
 **English** | [中文](README.zh-CN.md)
 
-
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
 [![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
-
 
 > **Beta.** Pilot Client is early: the authorization model, the audit trail and the command gateway
 > are implemented and unit-tested, but every capability that needs a native Android service (screen
