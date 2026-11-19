@@ -1,0 +1,11 @@
+{
+  "name": "pilot-mobile-client",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Pilot Client 手机反控端（uni-app）：把手机能力授权给电脑端 Pilot",
+  "scripts": {
+    "test": "node --test --test-reporter=spec test/capabilities.test.mjs test/device-actions.test.mjs test/reverse-control.test.mjs test/audit.test.mjs test/manifest.test.mjs test/icon.test.mjs",
+    "icons": "node scripts/gen-icons.mjs"
+  }
+}

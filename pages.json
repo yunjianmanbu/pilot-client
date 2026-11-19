@@ -1,0 +1,42 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "Pilot Client"
+      }
+    },
+    {
+      "path": "pages/pair/index",
+      "style": {
+        "navigationBarTitleText": "连接电脑"
+      }
+    },
+    {
+      "path": "pages/capabilities/index",
+      "style": {
+        "navigationBarTitleText": "授权中心"
+      }
+    },
+    {
+      "path": "pages/control/index",
+      "style": {
+        "navigationBarTitleText": "反控台"
+      }
+    },
+    {
+      "path": "pages/audit/index",
+      "style": {
+        "navigationBarTitleText": "操作记录"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "Pilot Client",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#ffffff",
+    "backgroundColorTop": "#ffffff",
+    "backgroundColorBottom": "#ffffff"
+  }
+}

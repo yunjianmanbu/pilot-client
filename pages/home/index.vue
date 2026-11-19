@@ -1,0 +1,121 @@
+<template>
+  <view class="pc-page">
+    <view class="pc-row">
+      <text class="pc-title">Pilot Client</text>
+      <text class="pc-tag">v{{ version }}</text>
+    </view>
+    <text class="pc-sub">把手机交给电脑端的 Pilot 接管。每张授权卡都能单独收回，收回后对应命令立刻失效。</text>
+
+    <view class="pc-card">
+      <view class="pc-row">
+        <text class="pc-label">连接状态</text>
+        <text class="pc-tag" :class="connected ? 'pc-tag-ok' : ''">{{ connected ? '已连接' : '本机自测' }}</text>
+      </view>
+      <view class="pc-row">
+        <text class="pc-label">通道</text>
+        <text class="pc-value pc-mono">{{ link.detail }}</text>
+      </view>
+      <view class="pc-btn" @click="go('/pages/pair/index')">和电脑配对</view>
+    </view>
+
+    <view class="pc-card">
+      <view class="pc-row">
+        <text class="pc-label">授权进度</text>
+        <text class="pc-value">{{ summary.granted }} / {{ summary.total }}</text>
+      </view>
+      <view class="pc-progress">
+        <view class="pc-progress-bar" :style="{ width: ratioPercent }"></view>
+      </view>
+      <view class="pc-row" v-for="item in riskRows" :key="item.risk">
+        <text class="pc-label">{{ item.label }}风险能力</text>
+        <text class="pc-value">{{ item.granted }} / {{ item.total }}</text>
+      </view>
+      <view class="pc-btn" @click="go('/pages/capabilities/index')">进入授权中心</view>
+      <view class="pc-btn pc-btn-ghost" @click="go('/pages/control/index')">打开反控台</view>
+    </view>
+
+    <view class="pc-card">
+      <view class="pc-row">
+        <text class="pc-label">最近操作</text>
+        <text class="pc-label" @click="go('/pages/audit/index')">全部记录 ›</text>
+      </view>
+      <text v-if="recent.length === 0" class="pc-hint">还没有电脑端操作。授权后在这里能看到每一次点击、取文件和授权变更。</text>
+      <view v-for="(item, index) in recent" :key="index">
+        <text class="pc-mono">{{ formatItem(item) }}</text>
+      </view>
+    </view>
+
+    <view class="pc-card">
+      <text class="pc-value">安全提醒</text>
+      <text class="pc-hint">
+        授权后这台手机理论上可以由电脑端完全操作：看屏幕、点击、读通知与文件。只给可信的电脑配对；
+        在公共网络下先断开；出门前到授权中心把「无障碍服务」和「设备管理器」关掉，是最快的止损方式。
+      </text>
+    </view>
+  </view>
+</template>
+
+<script>
+import { state, refreshGranted, refreshAudit } from '../../lib/app-state.js'
+import { summarize, riskLabel, RISK_ORDER } from '../../lib/capabilities.js'
+
+export default {
+  data() {
+    return {
+      version: '1.0.0',
+      summary: summarize({})
+    }
+  },
+  computed: {
+    link() {
+      return state.link
+    },
+    connected() {
+      return state.link.status === 'online'
+    },
+    ratioPercent() {
+      return `${Math.round(this.summary.ratio * 100)}%`
+    },
+    riskRows() {
+      return RISK_ORDER.map((risk) => ({
+        risk,
+        label: riskLabel(risk),
+        granted: this.summary.byRisk[risk]?.granted || 0,
+        total: this.summary.byRisk[risk]?.total || 0
+      }))
+    },
+    recent() {
+      return state.audit.slice(0, 3)
+    }
+  },
+  onShow() {
+    refreshGranted()
+    refreshAudit()
+    this.summary = summarize(state.granted)
+  },
+  methods: {
+    go(url) {
+      uni.navigateTo({ url })
+    },
+    formatItem(item) {
+      const time = new Date(item.at).toTimeString().slice(0, 8)
+      return `${time} ${item.cmd} ${item.ok ? '成功' : item.code || '失败'}`
+    }
+  }
+}
+</script>
+
+<style>
+.pc-progress {
+  height: 12rpx;
+  margin: 18rpx 0 22rpx;
+  border-radius: 999rpx;
+  background-color: #f3f4f6;
+  overflow: hidden;
+}
+
+.pc-progress-bar {
+  height: 100%;
+  background-color: #111111;
+}
+</style>
