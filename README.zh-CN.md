@@ -2,6 +2,10 @@
 
 [English](README.md) | **中文**
 
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
+[![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
+
 **官网与下载：** <https://pilot.medpilot.cc/zh.html#client-download> —— 截图、演示视频与各平台安装包。
 
 > **Beta（测试版）**：授权模型、审计与命令网关已经实现并有单测覆盖，但所有需要原生 Android 服务的
