@@ -2,11 +2,18 @@
 
 **English** | [中文](README.zh-CN.md)
 
+[![CI](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml/badge.svg)](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
 [![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
 
 **Website & installers:** <https://pilot.medpilot.cc/#client-download> — screenshots, demo video and every download.
+
+> **Use it only on devices you own or are authorized to control.** The defaults are code, not
+> promises: destructive commands sit above the policy ceiling, every level-2+ action needs an
+> on-phone confirmation, and everything (including refusals) lands in a redacted audit log.
+> Covert monitoring, bulk account farming and help-desk scams are out of scope, and the project says
+> so in public: [`RESPONSIBLE_USE.md`](RESPONSIBLE_USE.md).
 
 > **Beta.** Pilot Client is early: the authorization model, the audit trail and the command gateway
 > are implemented and unit-tested, but every capability that needs a native Android service (screen

@@ -46,6 +46,15 @@
     </view>
 
     <view class="pc-card">
+      <view class="pc-row">
+        <text class="pc-label">版本</text>
+        <text class="pc-tag" :class="hasUpdate ? 'pc-tag-warn' : ''">{{ versionLabel }}</text>
+      </view>
+      <text v-if="hasUpdate" class="pc-hint">发现 v{{ updateVersion }}，可以直接下载安装。</text>
+      <view class="pc-btn" @click="go('/pages/update/index')">{{ hasUpdate ? '安装更新' : '检查更新' }}</view>
+    </view>
+
+    <view class="pc-card">
       <text class="pc-value">安全提醒</text>
       <text class="pc-hint">
         授权后这台手机理论上可以由电脑端完全操作：看屏幕、点击、读通知与文件。只给可信的电脑配对；
@@ -58,15 +67,29 @@
 <script>
 import { state, refreshGranted, refreshAudit } from '../../lib/app-state.js'
 import { summarize, riskLabel, RISK_ORDER } from '../../lib/capabilities.js'
+import { currentAppInfo, downloadState, updateNotice } from '../../lib/update.js'
 
 export default {
   data() {
     return {
-      version: '1.0.0',
-      summary: summarize({})
+      version: '1.0.1',
+      summary: summarize({}),
+      // 更新状态不是响应式对象（lib 里保持零依赖，方便 node --test 直接跑源码），
+      // 每次 onShow 主动拷一份到 data 里。
+      notice: { has: false, version: '', running: '' }
     }
   },
   computed: {
+    versionLabel() {
+      if (this.notice.has) return `可更新 v${this.notice.version}`
+      return this.notice.running ? `v${this.notice.running}` : `v${this.version}`
+    },
+    hasUpdate() {
+      return this.notice.has
+    },
+    updateVersion() {
+      return this.notice.version
+    },
     link() {
       return state.link
     },
@@ -92,6 +115,13 @@ export default {
     refreshGranted()
     refreshAudit()
     this.summary = summarize(state.granted)
+    const running = currentAppInfo().version
+    const target = updateNotice.target
+    this.notice = {
+      has: !!target,
+      version: target?.version || downloadState.version || '',
+      running: running || ''
+    }
   },
   methods: {
     go(url) {

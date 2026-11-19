@@ -11,7 +11,7 @@ const manifest = JSON.parse(readFileSync(resolve(ROOT, 'manifest.json'), 'utf8')
 
 test('manifest：应用信息符合「Pilot Client」', () => {
   assert.equal(manifest.name, 'Pilot Client')
-  assert.equal(manifest.versionName, '1.0.0')
+  assert.match(manifest.versionName, /^\d+\.\d+\.\d+$/)
   assert.match(manifest.appid, /^__UNI__[0-9A-F]{7}$/)
   const android = manifest['app-plus'].distribute.android
   assert.equal(android.packagename, 'cc.medpilot.pilotclient')

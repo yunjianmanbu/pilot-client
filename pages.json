@@ -1,6 +1,20 @@
 {
   "pages": [
     {
+      "path": "pages/launch/index",
+      "style": {
+        "navigationBarTitleText": "Pilot Client",
+        "navigationStyle": "custom",
+        "backgroundColor": "#ffffff",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none",
+          "animationType": "fade-in",
+          "animationDuration": 200
+        }
+      }
+    },
+    {
       "path": "pages/home/index",
       "style": {
         "navigationBarTitleText": "Pilot Client"
@@ -28,6 +42,12 @@
       "path": "pages/audit/index",
       "style": {
         "navigationBarTitleText": "操作记录"
+      }
+    },
+    {
+      "path": "pages/update/index",
+      "style": {
+        "navigationBarTitleText": "应用更新"
       }
     }
   ],

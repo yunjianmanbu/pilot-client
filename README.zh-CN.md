@@ -2,11 +2,11 @@
 
 [English](README.md) | **中文**
 
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
-[![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
-
 **官网与下载：** <https://pilot.medpilot.cc/zh.html#client-download> —— 截图、演示视频与各平台安装包。
+
+> **只用于你拥有、或已获得设备所有者明确授权的手机。** 几条默认值是写死在代码里的：危险能力超出策略上限直接拒绝、
+> L2 以上每条命令都要手机端确认、所有执行（含被拒绝的）进脱敏审计。隐蔽监控、群控养号、冒充客服代操作不在支持范围内，
+> 项目公开表态见 [`RESPONSIBLE_USE.md`](RESPONSIBLE_USE.md)。
 
 > **Beta（测试版）**：授权模型、审计与命令网关已经实现并有单测覆盖，但所有需要原生 Android 服务的
 > 能力（屏幕镜像、点击注入、通知读取、短信 / 通讯录 / 通话、定位、相机）目前都明确返回
