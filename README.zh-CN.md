@@ -75,5 +75,5 @@ npm run icons     # 重新生成白底黑 P 黑点图标（48/72/96/144/192/1024
 
 ## 许可
 
-[Apache License 2.0](../LICENSE)，版权归 2026 rigongyizu。你需要保留版权声明与 [`NOTICE`](../NOTICE)
-文件，并在修改过的文件里注明改动。第三方组件见 [`NOTICE`](../NOTICE)。
+[Apache License 2.0](LICENSE)，版权归 2026 rigongyizu。你需要保留版权声明与 [`NOTICE`](NOTICE)
+文件，并在修改过的文件里注明改动。第三方组件见 [`NOTICE`](NOTICE)。

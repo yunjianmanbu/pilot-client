@@ -90,6 +90,6 @@ permission each feature maps to, and why some very attractive features are inten
 
 ## License
 
-[Apache License 2.0](../LICENSE), copyright 2026 rigongyizu. Keep the copyright notice and the
-[`NOTICE`](../NOTICE) file, and state the changes in files you modified. Third-party components are
-listed in [`NOTICE`](../NOTICE).
+[Apache License 2.0](LICENSE), copyright 2026 rigongyizu. Keep the copyright notice and the
+[`NOTICE`](NOTICE) file, and state the changes in files you modified. Third-party components are
+listed in [`NOTICE`](NOTICE).

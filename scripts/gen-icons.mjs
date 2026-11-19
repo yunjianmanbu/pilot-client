@@ -14,7 +14,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { renderIcon, SQUARE_P_PATH } from '../../scripts/brand-icon.mjs'
+import { renderIcon, SQUARE_P_PATH } from './brand-icon.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
