@@ -6,9 +6,9 @@
  *
  * 用法（仓库根目录）：
  *
- *   node pilot/mobile-client/scripts/gen-icons.mjs
+ *   node pilot/pilot-client/scripts/gen-icons.mjs
  *
- * 只写 `pilot/mobile-client/static/icons/` 与其 `icon.svg`，不动其它目录。
+ * 只写 `pilot/pilot-client/static/icons/` 与其 `icon.svg`，不动其它目录。
  * 退出码 0 = 全部写出；1 = 写入失败。
  */
 import { mkdirSync, writeFileSync } from 'node:fs'

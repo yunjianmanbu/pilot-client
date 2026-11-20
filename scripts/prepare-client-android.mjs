@@ -8,13 +8,13 @@
  *
  *   1. build.gradle          namespace / applicationId → cc.medpilot.pilotclient
  *                            versionCode / versionName / minSdkVersion / targetSdkVersion
- *                            全部取自 mobile-client/manifest.json，不再手工同步
+ *                            全部取自 pilot-client/manifest.json，不再手工同步
  *                            签名 → 环境变量注入的 keystore（模板自带的 test.jks 是公开示例证书，必须换掉）
  *   2. AndroidManifest.xml   dcloud_appkey → 申请的离线 appkey
  *                            补齐 manifest.json 里声明的权限
  *   3. assets/data/dcloud_control.xml   appid → __UNI__3780DD8（不是 Pilot Link 的 __UNI__71B4F08）
  *   4. assets/apps/<appid>/www          ← HBuilderX 生成的本地打包资源
- *   5. res/ 应用名 / 桌面图标 / 启动图   ← mobile-client/static（`npm run icons` 生成）
+ *   5. res/ 应用名 / 桌面图标 / 启动图   ← pilot-client/static（`npm run icons` 生成）
  *      strings.xml app_name、mipmap-<dpi>/ic_launcher.png、drawable/splash.9.png
  *      离线打包的图标与启动图只认原生 res/，改 www 里的 manifest.icons 不会生效
  *   dependencies 里补 zip4j：wgt 资源包热更靠 plus.runtime.install 解压，模板不自带
@@ -44,18 +44,18 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 
 /**
  * 本脚本同时活在两种布局里：
- *   主仓库 pilot/scripts/            → 仓库根在上面两级，子项目在 pilot/mobile-client
+ *   主仓库 pilot/scripts/            → 仓库根在上面两级，子项目在 pilot/pilot-client
  *   独立仓库 pilot-client/scripts/   → 仓库根就在上一级，子项目就是仓库根
  * 用「上一级有没有 manifest.json」判断：独立仓库的根目录里有，主仓库的 pilot/ 里没有。
- * 拆仓后如果不认布局，这里会多退一级，拼出 <repo>/pilot/mobile-client/... 这种不存在的路径，
+ * 拆仓后如果不认布局，这里会多退一级，拼出 <repo>/pilot/pilot-client/... 这种不存在的路径，
  * CI 里表现为“缺少启动图标源文件”，而不是报告路径算错。
  */
 const parentDir = path.resolve(scriptDir, '..')
 const standalone = fs.existsSync(path.join(parentDir, 'manifest.json'))
 export const REPO_ROOT = standalone ? parentDir : path.resolve(scriptDir, '..', '..')
 
-/** 子项目目录：主仓库里是 pilot/mobile-client，独立仓库里就是仓库根。 */
-export const APP_DIR = standalone ? parentDir : path.join(REPO_ROOT, 'pilot', 'mobile-client')
+/** 子项目目录：主仓库里是 pilot/pilot-client，独立仓库里就是仓库根。 */
+export const APP_DIR = standalone ? parentDir : path.join(REPO_ROOT, 'pilot', 'pilot-client')
 
 export const MANIFEST_PATH = path.join(APP_DIR, 'manifest.json')
 export const BUILD_ROOT = path.join(REPO_ROOT, '.build')
@@ -140,7 +140,7 @@ export const APP_NAME = 'Pilot Client'
 /** 品牌资源来源（`npm run icons` 生成）。 */
 export const BRAND_DIR = path.join(APP_DIR, 'static')
 
-/** Android 各 dpi 的启动图标尺寸，与 mobile-client/scripts/gen-icons.mjs 的 SIZES 一致。 */
+/** Android 各 dpi 的启动图标尺寸，与 pilot-client/scripts/gen-icons.mjs 的 SIZES 一致。 */
 export const LAUNCHER_ICONS = [
   ['mdpi', 48],
   ['hdpi', 72],
@@ -397,7 +397,7 @@ function main() {
     process.stdout.write('可以出包了：JAVA_HOME + ANDROID_HOME + PILOT_KEYSTORE/PILOT_STORE_PASSWORD 就绪后，\n')
     process.stdout.write(`  cd ${path.relative(REPO_ROOT, TARGET_DIR)} && ./gradlew assembleRelease\n`)
   } else {
-    process.stdout.write('还差 www：HBuilderX 打开 pilot/mobile-client → 发行 → 生成本地打包 App 资源，\n')
+    process.stdout.write('还差 www：HBuilderX 打开 pilot/pilot-client → 发行 → 生成本地打包 App 资源，\n')
     process.stdout.write('然后重跑本脚本即可（会自动复制 www 并清掉别的 appid 目录）。\n')
   }
 }
