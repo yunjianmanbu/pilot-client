@@ -81,7 +81,7 @@ DCloud 的离线 appkey 校验 **appid + 包名 + 证书 SHA1** 三者同时匹�
 # 1. 用 HBuilderX CLI 生成 www（插件需为 5.34，与 Android-SDK@5.34 配套）
 "/d/soft/HBuilderX.4.24.2024072208/HBuilderX/cli.exe" publish app-android \
   --type appResource --project "<仓库绝对路径>\pilot\mobile-client"
-# 产物：pilot/mobile-client/unpackage/resources/__UNI__3780DD8/www
+# 产物：pilot/pilot-client/unpackage/resources/__UNI__3780DD8/www
 
 # 2. 准备离线工程（确认自检表 www 项变 ✅）
 node pilot/scripts/prepare-client-android.mjs --force
