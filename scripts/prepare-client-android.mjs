@@ -41,8 +41,23 @@ export const APP_KEY = 'aed30a6f925edf13dcbf492bc50df7bd'
 export const CERT_SHA1 = 'EC:96:CE:48:53:3B:34:3D:FE:FC:8E:E9:E7:B9:FC:E7:77:81:45:41'
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
-export const REPO_ROOT = path.resolve(scriptDir, '..', '..')
-export const MANIFEST_PATH = path.join(REPO_ROOT, 'pilot', 'mobile-client', 'manifest.json')
+
+/**
+ * 本脚本同时活在两种布局里：
+ *   主仓库 pilot/scripts/            → 仓库根在上面两级，子项目在 pilot/mobile-client
+ *   独立仓库 pilot-client/scripts/   → 仓库根就在上一级，子项目就是仓库根
+ * 用「上一级有没有 manifest.json」判断：独立仓库的根目录里有，主仓库的 pilot/ 里没有。
+ * 拆仓后如果不认布局，这里会多退一级，拼出 <repo>/pilot/mobile-client/... 这种不存在的路径，
+ * CI 里表现为“缺少启动图标源文件”，而不是报告路径算错。
+ */
+const parentDir = path.resolve(scriptDir, '..')
+const standalone = fs.existsSync(path.join(parentDir, 'manifest.json'))
+export const REPO_ROOT = standalone ? parentDir : path.resolve(scriptDir, '..', '..')
+
+/** 子项目目录：主仓库里是 pilot/mobile-client，独立仓库里就是仓库根。 */
+export const APP_DIR = standalone ? parentDir : path.join(REPO_ROOT, 'pilot', 'mobile-client')
+
+export const MANIFEST_PATH = path.join(APP_DIR, 'manifest.json')
 export const BUILD_ROOT = path.join(REPO_ROOT, '.build')
 export const TARGET_DIR = path.join(BUILD_ROOT, 'pilot-client-android')
 
@@ -123,7 +138,7 @@ export function patchControlXml(xml, { appId, appVer }) {
 export const APP_NAME = 'Pilot Client'
 
 /** 品牌资源来源（`npm run icons` 生成）。 */
-export const BRAND_DIR = path.join(REPO_ROOT, 'pilot', 'mobile-client', 'static')
+export const BRAND_DIR = path.join(APP_DIR, 'static')
 
 /** Android 各 dpi 的启动图标尺寸，与 mobile-client/scripts/gen-icons.mjs 的 SIZES 一致。 */
 export const LAUNCHER_ICONS = [
@@ -252,7 +267,7 @@ function copyProject(template, target, force) {
 
 /** HBuilderX「生成本地打包 App 资源」的几种可能输出位置。 */
 function detectWww() {
-  const uni = path.join(REPO_ROOT, 'pilot', 'mobile-client', 'unpackage')
+  const uni = path.join(APP_DIR, 'unpackage')
   return [
     path.join(uni, 'resources', APP_ID, 'www'),
     path.join(uni, 'release', 'app-plus', 'www'),
