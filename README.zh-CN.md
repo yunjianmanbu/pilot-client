@@ -7,6 +7,9 @@
 [![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
 [![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
 
+**状态：Beta（测试版）。** 目前每个公开版本都是测试版：功能集合仍会随版本变化，
+需要 Android 系统服务的能力尚未接通。细节见下方 Beta 说明。
+
 **官网与下载：** <https://pilot.medpilot.cc/zh.html#client-download> —— 截图、演示视频与各平台安装包。
 
 **更新记录：** [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md) —— 每个版本改了什么，最新的在最上面。

@@ -2,6 +2,10 @@
 
 **English** | [中文](README.zh-CN.md)
 
+**Status: beta (preview).** Every published build is a test build: the feature set still changes
+between releases, and the capabilities that need an Android system service are not wired yet.
+Details in the beta note below.
+
 [![CI](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml/badge.svg)](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
