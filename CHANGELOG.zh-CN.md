@@ -9,6 +9,9 @@ Pilot Client 是被控端：不是用手机控制电脑，而是让电脑看见�
 
 英文版：[CHANGELOG.md](CHANGELOG.md)
 
+> **Beta（测试版）。** 目前每个公开版本都是测试版：功能集合仍会随版本变化，需要 Android 系统服务的
+> 能力仍然明确返回 `not_granted`，不会假装成功。说明见 [README.zh-CN.md](README.zh-CN.md)。
+
 格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 

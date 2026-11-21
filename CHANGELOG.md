@@ -10,6 +10,10 @@ the [Releases page](https://github.com/yunjianmanbu/pilot-client/releases) and o
 
 Chinese version: [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md)
 
+> **Beta.** Every published version so far is a test build: the feature set still changes between
+> releases, and capabilities that need an Android system service still return `not_granted`
+> instead of faking success. See the beta note in [README.md](README.md).
+
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project follows
 [Semantic Versioning](https://semver.org/).
 
