@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "description": "Pilot Client 手机反控端（uni-app）：把手机能力授权给电脑端 Pilot",
   "scripts": {
-    "test": "node --test --test-reporter=spec test/capabilities.test.mjs test/device-actions.test.mjs test/reverse-control.test.mjs test/audit.test.mjs test/manifest.test.mjs test/icon.test.mjs test/update.test.mjs test/splash.test.mjs test/branding.test.mjs",
+    "test": "node --test --test-reporter=spec test/capabilities.test.mjs test/device-actions.test.mjs test/reverse-control.test.mjs test/audit.test.mjs test/manifest.test.mjs test/icon.test.mjs test/update.test.mjs test/splash.test.mjs test/branding.test.mjs test/pairing.test.mjs test/link.test.mjs",
     "icons": "node scripts/gen-icons.mjs"
   }
 }

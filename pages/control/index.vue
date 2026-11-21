@@ -2,7 +2,7 @@
   <view class="pc-page">
     <view class="pc-row">
       <text class="pc-title">反控台</text>
-      <text class="pc-tag">本机自测</text>
+      <text class="pc-tag" :class="linkTagClass">{{ linkLabel }}</text>
     </view>
     <text class="pc-sub">电脑端发来的每条命令都走这里。下面这些按钮等价于电脑端下发的同一条命令，用来验证授权是否真的生效。</text>
 
@@ -51,6 +51,15 @@
 <script>
 import { state, runCommand } from '../../lib/app-state.js'
 
+const LINK_LABELS = {
+  local: '本机自测',
+  pairing: '配对中',
+  connecting: '连接中',
+  online: '电脑已连',
+  offline: '已断开',
+  error: '连接失败'
+}
+
 export default {
   data() {
     return {
@@ -86,6 +95,17 @@ export default {
       const payload = this.last.ok ? this.last.data : this.last.error
       const text = JSON.stringify(payload)
       return text && text.length > 600 ? `${text.slice(0, 600)}…` : text
+    },
+    link() {
+      return state.link
+    },
+    linkLabel() {
+      return LINK_LABELS[state.link.status] || '本机自测'
+    },
+    linkTagClass() {
+      if (state.link.status === 'online') return 'pc-tag-ok'
+      if (state.link.status === 'error') return 'pc-tag-danger'
+      return ''
     }
   },
   methods: {

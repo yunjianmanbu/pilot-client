@@ -2,8 +2,8 @@
     "name" : "Pilot Client",
     "appid" : "__UNI__3780DD8",
     "description" : "Pilot Client：把你手机的全部能力授权给电脑端的 Pilot，由电脑远距离查看屏幕、注入操作、读取通知与文件。所有授权都可随时收回。",
-    "versionName" : "1.0.3",
-    "versionCode" : "103",
+    "versionName" : "1.0.5",
+    "versionCode" : "105",
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,

@@ -293,12 +293,14 @@ test('joinPairing：云端 wss 走 relay 握手 + pair.join + pair.accepted', as
   assert.equal(join.data.lookup, 'lookup-key-abcdefghijklmnop')
   assert.equal(join.data.phoneId, 'phone-abcdefgh')
   assert.equal(join.data.protocol, PROTOCOL_VERSION)
-  assert.ok(join.data.phonePub.length === 64)
+  assert.ok(join.data.phonePub.length === 86)
 
   // 3. 电脑确认：pair.accepted（payload 用 pcToPhone seq=1 加密）
+  // 电脑端密钥依赖手机在 pair.join 里发的 phonePub，而不是 makeSession 的 phone
+  const pcKeysForJoin = derivePairKeys(session.pc.privateKey, join.data.phonePub, session.secret)
   const token = 'token-0123456789abcdef'
   const inner = { type: 'pair.accept', deviceId: 'pc-device-1234', deviceName: '工作电脑', token }
-  const envelope = encryptPayload(session.pcKeys.pcToPhone, inner, 1, randomBytes)
+  const envelope = encryptPayload(pcKeysForJoin.pcToPhone, inner, 1, randomBytes)
   socket.onmessage({ data: JSON.stringify({ type: 'pair.accepted', payload: envelope }) })
 
   const result = await promise
@@ -307,8 +309,8 @@ test('joinPairing：云端 wss 走 relay 握手 + pair.join + pair.accepted', as
   assert.equal(result.deviceName, '工作电脑')
   assert.equal(result.token, token)
   assert.equal(result.relayUrl, 'wss://relay.example.com/ws')
-  assert.equal(result.keys.pcToPhone, base64url(session.pcKeys.pcToPhone))
-  assert.equal(result.keys.phoneToPc, base64url(session.pcKeys.phoneToPc))
+  assert.equal(result.keys.pcToPhone, base64url(pcKeysForJoin.pcToPhone))
+  assert.equal(result.keys.phoneToPc, base64url(pcKeysForJoin.phoneToPc))
   assert.equal(result.outSeq, 0)
   assert.equal(result.inSeq, 1)
   assert.deepEqual(pending, [])
@@ -324,9 +326,10 @@ test('joinPairing：局域网直连不包 relay.frame', async () => {
   const promise = joinPairing(encodeCode(payload), deps, {})
   socket.onopen()
   assert.equal(socket.sent[0].type, 'pair.join')
+  const pcKeysForJoin = derivePairKeys(session.pc.privateKey, socket.sent[0].phonePub, session.secret)
   const token = 'token-0123456789abcdef'
   const inner = { type: 'pair.accept', deviceId: 'pc-device-1234', deviceName: '工作电脑', token }
-  const envelope = encryptPayload(session.pcKeys.pcToPhone, inner, 1, randomBytes)
+  const envelope = encryptPayload(pcKeysForJoin.pcToPhone, inner, 1, randomBytes)
   socket.onmessage({ data: JSON.stringify({ type: 'pair.accepted', payload: envelope }) })
   const result = await promise
   assert.equal(result.relayUrl, 'ws://192.168.1.5:8080/ws')
@@ -345,9 +348,10 @@ test('joinPairing：pair.pending 触发 onPending 且不中断', async () => {
   socket.onmessage({ data: JSON.stringify({ type: 'relay.ready' }) })
   socket.onmessage({ data: JSON.stringify({ type: 'pair.pending' }) })
   assert.deepEqual(pending, [1])
+  const pcKeysForJoin = derivePairKeys(session.pc.privateKey, socket.sent[1].data.phonePub, session.secret)
   const token = 'token-0123456789abcdef'
   const inner = { type: 'pair.accept', deviceId: 'pc-device-1234', deviceName: '工作电脑', token }
-  const envelope = encryptPayload(session.pcKeys.pcToPhone, inner, 1, randomBytes)
+  const envelope = encryptPayload(pcKeysForJoin.pcToPhone, inner, 1, randomBytes)
   socket.onmessage({ data: JSON.stringify({ type: 'pair.accepted', payload: envelope }) })
   await promise
 })
@@ -362,8 +366,9 @@ test('joinPairing：deviceId 不一致拒绝（防串号）', async () => {
   const promise = joinPairing(encodeCode(payload), deps, {})
   socket.onopen()
   socket.onmessage({ data: JSON.stringify({ type: 'relay.ready' }) })
+  const pcKeysForJoin = derivePairKeys(session.pc.privateKey, socket.sent[1].data.phonePub, session.secret)
   const inner = { type: 'pair.accept', deviceId: 'other-device-9999', token: 'token-0123456789abcdef' }
-  const envelope = encryptPayload(session.pcKeys.pcToPhone, inner, 1, randomBytes)
+  const envelope = encryptPayload(pcKeysForJoin.pcToPhone, inner, 1, randomBytes)
   socket.onmessage({ data: JSON.stringify({ type: 'pair.accepted', payload: envelope }) })
   await assert.rejects(promise, /电脑身份与配对链接不一致/)
 })
@@ -396,9 +401,10 @@ test('joinPairing：relay.error 换下一个地址重试', async () => {
   // 第二个 socket 是局域网直连
   socket2.onopen()
   assert.equal(socket2.sent[0].type, 'pair.join')
+  const pcKeysForJoin = derivePairKeys(session.pc.privateKey, socket2.sent[0].phonePub, session.secret)
   const token = 'token-0123456789abcdef'
   const inner = { type: 'pair.accept', deviceId: 'pc-device-1234', deviceName: '工作电脑', token }
-  const envelope = encryptPayload(session.pcKeys.pcToPhone, inner, 1, randomBytes)
+  const envelope = encryptPayload(pcKeysForJoin.pcToPhone, inner, 1, randomBytes)
   socket2.onmessage({ data: JSON.stringify({ type: 'pair.accepted', payload: envelope }) })
   const result = await promise
   assert.equal(result.relayUrl, 'ws://192.168.1.5:8080/ws')

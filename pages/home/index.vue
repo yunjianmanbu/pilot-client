@@ -9,7 +9,11 @@
     <view class="pc-card">
       <view class="pc-row">
         <text class="pc-label">连接状态</text>
-        <text class="pc-tag" :class="connected ? 'pc-tag-ok' : ''">{{ connected ? '已连接' : '本机自测' }}</text>
+        <text class="pc-tag" :class="linkTagClass">{{ linkLabel }}</text>
+      </view>
+      <view class="pc-row" v-if="link.deviceName">
+        <text class="pc-label">电脑</text>
+        <text class="pc-value">{{ link.deviceName }}</text>
       </view>
       <view class="pc-row">
         <text class="pc-label">通道</text>
@@ -69,6 +73,15 @@ import { state, refreshGranted, refreshAudit } from '../../lib/app-state.js'
 import { summarize, riskLabel, RISK_ORDER } from '../../lib/capabilities.js'
 import { currentAppInfo, downloadState, updateNotice } from '../../lib/update.js'
 
+const LINK_LABELS = {
+  local: '未配对',
+  pairing: '配对中',
+  connecting: '连接中',
+  online: '已连接',
+  offline: '已断开',
+  error: '连接失败'
+}
+
 export default {
   data() {
     return {
@@ -95,6 +108,14 @@ export default {
     },
     connected() {
       return state.link.status === 'online'
+    },
+    linkLabel() {
+      return LINK_LABELS[state.link.status] || '未配对'
+    },
+    linkTagClass() {
+      if (state.link.status === 'online') return 'pc-tag-ok'
+      if (state.link.status === 'error') return 'pc-tag-danger'
+      return ''
     },
     ratioPercent() {
       return `${Math.round(this.summary.ratio * 100)}%`

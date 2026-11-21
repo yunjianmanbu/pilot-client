@@ -12,6 +12,7 @@ import {
   compareVersionNames,
   computeDownloadProgress,
   currentAppInfo,
+  interpretDownloaderState,
   isNewerVersion,
   normalizeManifest,
   resolveUpdateTarget,
@@ -88,6 +89,60 @@ test('verifyTimeoutFor：小包 20s 起步，大包按大小放大但有上限',
   assert.equal(verifyTimeoutFor(30 * 1024 * 1024), 120000)
   // 再大也不会无限等，3 分钟封顶。
   assert.equal(verifyTimeoutFor(500 * 1024 * 1024), 180000)
+})
+
+test('interpretDownloaderState：state=4 是真正的完成，不是只把界面置满', () => {
+  const result = interpretDownloaderState({ state: 4, downloadedSize: 339502, totalSize: 339502, expectedSize: 339502 })
+  assert.equal(result.action, 'complete')
+  assert.equal(result.progress, 100)
+  // 个别机型 state=4 时 totalSize 还没填，用清单大小兜底。
+  assert.equal(interpretDownloaderState({ state: 4, downloadedSize: 0, totalSize: 0, expectedSize: 339502 }).action, 'complete')
+})
+
+test('interpretDownloaderState：state=5 是失败，不能当成完成或继续等', () => {
+  assert.equal(interpretDownloaderState({ state: 5, downloadedSize: 10, totalSize: 100 }).action, 'failed')
+})
+
+test('interpretDownloaderState：只发 state=3 的机型——收满判定为 full，半程仍是 progress', () => {
+  const half = interpretDownloaderState({ state: 3, downloadedSize: 169751, totalSize: 339502, expectedSize: 339502 })
+  assert.equal(half.action, 'progress')
+  assert.equal(half.progress, 50)
+  const full = interpretDownloaderState({ state: 3, downloadedSize: 339502, totalSize: 339502, expectedSize: 339502 })
+  assert.equal(full.action, 'full')
+  // 服务器不给总大小时回退到清单大小，收满同样能识别。
+  assert.equal(
+    interpretDownloaderState({ state: 3, downloadedSize: 339502, totalSize: 0, expectedSize: 339502 }).action,
+    'full'
+  )
+})
+
+test('interpretDownloaderState：三类机型的完成事件序列都能落到 complete 或 full（不再停在 99%）', () => {
+  const size = 339502
+  // 机型 A：state 3 → 4（不回传 totalSize）。
+  const a = interpretDownloaderState({ state: 4, downloadedSize: 0, totalSize: 0, expectedSize: size })
+  // 机型 B：只发 state=3，最后一条 downloadedSize 已等于大小。
+  const b = interpretDownloaderState({ state: 3, downloadedSize: size, totalSize: 0, expectedSize: size })
+  // 机型 C：正常中途，最后靠完成回调（这里只验证中途不会被误判完成）。
+  const c = interpretDownloaderState({ state: 3, downloadedSize: size - 1, totalSize: size, expectedSize: size })
+  assert.equal(a.action, 'complete')
+  assert.equal(b.action, 'full')
+  assert.equal(c.action, 'progress')
+  assert.equal(c.progress, 99)
+})
+
+test('update.js：state=4 必须 resolve 下载 promise，并有轮询与落盘等待兜底', () => {
+  const source = readFileSync(resolve(ROOT, 'lib/update.js'), 'utf8')
+  // 旧写法只有一个 markDone：只改 UI、不 resolve，只发 state=4 的机型就永远挂着。
+  assert.doesNotMatch(source, /const markDone =/)
+  assert.match(source, /action === 'complete'/)
+  assert.match(source, /settle\(resolve, download\?\.filename \|\| path\)/)
+  // statechanged 不触发时的进度轮询（pilot/pilot-link 同款兜底）。
+  assert.match(source, /PROGRESS_POLL_INTERVAL_MS/)
+  assert.match(source, /COMPLETION_GRACE_MS/)
+  // 下载完成后先等文件落盘，否则会读到半个包。
+  assert.match(source, /waitForDownloadedFile\(downloaded, target\.size\)/)
+  // 安装用绝对路径，避免部分机型把 _doc 解析到别的沙箱目录。
+  assert.match(source, /convertAbsoluteFileSystem/)
 })
 
 test('update.js：校验阶段是独立状态，且分块读文件而不是整包 readAsArrayBuffer', () => {
