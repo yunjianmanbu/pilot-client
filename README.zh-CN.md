@@ -9,6 +9,8 @@
 
 **官网与下载：** <https://pilot.medpilot.cc/zh.html#client-download> —— 截图、演示视频与各平台安装包。
 
+**更新记录：** [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md) —— 每个版本改了什么，最新的在最上面。
+
 > **只用于你拥有、或已获得设备所有者明确授权的手机。** 几条默认值是写死在代码里的：危险能力超出策略上限直接拒绝、
 > L2 以上每条命令都要手机端确认、所有执行（含被拒绝的）进脱敏审计。隐蔽监控、群控养号、冒充客服代操作不在支持范围内，
 > 项目公开表态见 [`RESPONSIBLE_USE.md`](../community/RESPONSIBLE_USE.md)。

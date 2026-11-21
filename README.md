@@ -9,6 +9,8 @@
 
 **Website & installers:** <https://pilot.medpilot.cc/#client-download> — screenshots, demo video and every download.
 
+**Changelog:** [CHANGELOG.md](CHANGELOG.md) — what changed in each release, newest first.
+
 > **Use it only on devices you own or are authorized to control.** The defaults are code, not
 > promises: destructive commands sit above the policy ceiling, every level-2+ action needs an
 > on-phone confirmation, and everything (including refusals) lands in a redacted audit log.
