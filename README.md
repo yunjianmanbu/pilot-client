@@ -16,7 +16,8 @@
 > so in public: [`RESPONSIBLE_USE.md`](../community/RESPONSIBLE_USE.md).
 
 > **Beta.** Pilot Client is early: the authorization model, the audit trail and the command gateway
-> are implemented and unit-tested, but every capability that needs a native Android service (screen
+> are implemented and unit-tested, and pairing plus command traffic now runs over the relay
+> (`lib/link.js`), but every capability that needs a native Android service (screen
 > mirroring, input injection, notification reading, SMS/contacts/calls, location, camera) still
 > returns an explicit `not_granted` with a hint. Nothing pretends to succeed. Expect the feature set
 > to change between releases.
@@ -36,7 +37,19 @@ Three products share one design language:
 The package name is `cc.medpilot.pilotclient`; Pilot Link is `cc.medpilot.pilot`, so both can be
 installed on the same phone.
 
+![Three products, three directions of control](docs/diagrams/en/direction.png)
+
 ## What works today
+
+Screenshots are captured from the H5 build of this repository (this build ships a Chinese UI):
+
+| Home: what the desktop may do | Pair with the desktop | The 12-group capability catalogue |
+| --- | --- | --- |
+| ![Home](docs/screenshots/c-01-home.jpg) | ![Pair](docs/screenshots/c-02-pair.jpg) | ![Capabilities](docs/screenshots/c-03-capabilities.jpg) |
+
+| Remote-control console | Redacted audit log | Update and release notes |
+| --- | --- | --- |
+| ![Control](docs/screenshots/c-04-control.jpg) | ![Audit](docs/screenshots/c-05-audit.jpg) | ![Update](docs/screenshots/c-06-update.jpg) |
 
 Running and covered by unit tests:
 
@@ -49,6 +62,10 @@ Running and covered by unit tests:
   entries survive a restart;
 - **Working command implementations** (`lib/device-actions.js`): device state, clipboard read/write,
   vibration, volume, brightness, keep-awake, toast, app list, launching apps, directory browsing;
+- **A real pairing channel** (`lib/link.js`): scan or paste the code from the desktop → `pair.join`
+  through the relay → ECDH P-256 + HKDF derives two AES-256-GCM keys → `hello/challenge/proof` →
+  `welcome`, then commands flow both ways; drops reconnect at `min(6s, 0.6s×1.7^n)` and a
+  `pair.revoked` from the desktop clears the stored pairing;
 - **Five pages**: home (grant progress + recent actions), pairing, authorization centre, control
   console (local self-test) and action log.
 
@@ -62,7 +79,7 @@ camera and microphone, lock-screen wipe. Each needs a system service registered 
 
 ```bash
 npm install
-npm test          # capability catalogue / manifest consistency / gateway / audit / device actions / icon pixels
+npm test          # capability catalogue / manifest consistency / gateway / audit / device actions / icon pixels / pairing link
 npm run icons     # regenerate the white-background black-P icon set (48/72/96/144/192/1024 + svg)
 ```
 
@@ -94,6 +111,10 @@ Packaging goes through HBuilderX or a uni-app offline build; the package name mu
   need adb / Shizuku / a platform signature. The app **does not request them**; they are only
   documented, so that "install an app and reconfigure the system remotely" never becomes a false
   promise.
+
+![Every rc.* command walks the same six gates](docs/diagrams/en/flow.png)
+
+![Twelve capability groups, four risk levels](docs/diagrams/en/risk-map.png)
 
 ## Design notes
 

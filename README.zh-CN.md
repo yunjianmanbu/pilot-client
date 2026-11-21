@@ -13,7 +13,8 @@
 > L2 以上每条命令都要手机端确认、所有执行（含被拒绝的）进脱敏审计。隐蔽监控、群控养号、冒充客服代操作不在支持范围内，
 > 项目公开表态见 [`RESPONSIBLE_USE.md`](../community/RESPONSIBLE_USE.md)。
 
-> **Beta（测试版）**：授权模型、审计与命令网关已经实现并有单测覆盖，但所有需要原生 Android 服务的
+> **Beta（测试版）**：授权模型、审计与命令网关已经实现并有单测覆盖，配对与命令收发也已接到
+> 云端中继（`lib/link.js`），但所有需要原生 Android 服务的
 > 能力（屏幕镜像、点击注入、通知读取、短信 / 通讯录 / 通话、定位、相机）目前都明确返回
 > `not_granted` 并给出修复提示，不会假装成功。版本之间功能集合仍会变化。
 
@@ -30,7 +31,19 @@
 
 包名 `cc.medpilot.pilotclient`，与 Pilot Link 的 `cc.medpilot.pilot` 不同，两者可同机共存。
 
+![三个产品，三个控制方向](docs/diagrams/zh/direction.png)
+
 ## 这一版做到了什么
+
+截图取自本仓库的 H5 构建：
+
+| 首页：电脑能对手机做什么 | 与电脑端配对 | 12 类能力目录 |
+| --- | --- | --- |
+| ![首页](docs/screenshots/c-01-home.jpg) | ![配对](docs/screenshots/c-02-pair.jpg) | ![能力目录](docs/screenshots/c-03-capabilities.jpg) |
+
+| 反控台 | 脱敏审计日志 | 更新与更新说明 |
+| --- | --- | --- |
+| ![反控台](docs/screenshots/c-04-control.jpg) | ![审计](docs/screenshots/c-05-audit.jpg) | ![更新](docs/screenshots/c-06-update.jpg) |
 
 已经能跑、有单测覆盖的：
 
@@ -42,6 +55,9 @@
   短信内容、文件路径、手机号只留长度，最近 200 条，重启不丢；
 - **真实可用的命令实现**（`lib/device-actions.js`）：设备状态、剪贴板读写、震动、音量、
   亮度、常亮、提示、应用列表、打开应用、目录浏览；
+- **真实的配对通道**（`lib/link.js`）：扫码 / 粘贴电脑端配对码 → 云端中继 `pair.join` → ECDH P-256 +
+  HKDF 派生双向 AES-256-GCM 密钥 → `hello/challenge/proof` 握手 → `welcome` 后收发命令；
+  断开按 `min(6s, 0.6s×1.7^n)` 重连，电脑解除配对时自动清掉落盘记录；
 - **5 个页面**：首页（授权进度 + 最近操作）、配对、授权中心、反控台（本机自测）、操作记录。
 
 **还没接原生层的**（会明确返回 `not_granted` + 修复提示，不会假装成功）：
@@ -53,7 +69,7 @@
 
 ```bash
 npm install
-npm test          # 单测：能力目录 / 清单一致性 / 网关 / 审计 / 设备动作 / 图标像素 / 更新与启动页
+npm test          # 单测：能力目录 / 清单一致性 / 网关 / 审计 / 设备动作 / 图标像素 / 更新与启动页 / 配对通道
 npm run icons     # 重新生成白底黑 P 黑点图标（48/72/96/144/192 + icon.png 1024 + svg）与 splash.9.png
 ```
 
@@ -159,6 +175,10 @@ node pilot/scripts/pack-client-wgt.mjs --shell 1.0.1
   所有文件访问、悬浮窗、修改系统设置、电池白名单……）；
 - `advanced`：`WRITE_SECURE_SETTINGS`、`READ_LOGS`、录内音、远程重启这类需要 adb / Shizuku /
   系统签名，本 App **不申请**，只在方案文档里列出，避免把「装个 App 就能远程改系统设置」写成假承诺。
+
+![每条 rc.* 命令都要过同一道六关](docs/diagrams/zh/flow.png)
+
+![12 类能力、4 个风险等级](docs/diagrams/zh/risk-map.png)
 
 ## 反控功能方案
 
