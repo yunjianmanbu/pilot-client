@@ -176,6 +176,8 @@ node pilot/scripts/pack-client-wgt.mjs --shell 1.0.1
 - `advanced`：`WRITE_SECURE_SETTINGS`、`READ_LOGS`、录内音、远程重启这类需要 adb / Shizuku /
   系统签名，本 App **不申请**，只在方案文档里列出，避免把「装个 App 就能远程改系统设置」写成假承诺。
 
+![每个动作都留一行脱敏记录，被拒绝的也一样](docs/diagrams/zh/audit.png)
+
 ![每条 rc.* 命令都要过同一道六关](docs/diagrams/zh/flow.png)
 
 ![12 类能力、4 个风险等级](docs/diagrams/zh/risk-map.png)

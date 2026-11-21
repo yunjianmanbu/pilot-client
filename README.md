@@ -112,6 +112,8 @@ Packaging goes through HBuilderX or a uni-app offline build; the package name mu
   documented, so that "install an app and reconfigure the system remotely" never becomes a false
   promise.
 
+![Every action leaves one redacted line, refusals included](docs/diagrams/en/audit.png)
+
 ![Every rc.* command walks the same six gates](docs/diagrams/en/flow.png)
 
 ![Twelve capability groups, four risk levels](docs/diagrams/en/risk-map.png)
