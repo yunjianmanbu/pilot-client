@@ -26,6 +26,8 @@
 把手机交给电脑端的 [Pilot](https://github.com/yunjianmanbu/pilot) 接管：电脑端能看屏幕、点屏幕、
 读通知与文件、调设备状态 —— 每一个动作都要过授权目录、每分钟限流与脱敏审计。
 
+![Pilot Client 动起来：把手机交出去、逐项授权、执行动作、留下审计](docs/social/zh/demo.gif)
+
 三个产品共用一套设计语言：
 
 | 产品 | 仓库 | 谁控制谁 | 图标 |

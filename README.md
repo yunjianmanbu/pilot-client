@@ -32,6 +32,8 @@ Hand your phone to [Pilot](https://github.com/yunjianmanbu/pilot) on the compute
 the screen, tap it, read notifications and files, and query device state — and every one of those
 actions goes through an authorization catalogue, a per-minute rate limit and a redacted audit log.
 
+![Pilot Client in motion: hand the phone over, grant each capability separately, act, then audit](docs/social/en/demo.gif)
+
 Three products share one design language:
 
 | Product | Repository | Who controls whom | Icon |
