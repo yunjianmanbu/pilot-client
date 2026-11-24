@@ -5,29 +5,61 @@ import { autoCheckUpdate } from './lib/update.js'
 
 let cancelSplashGuard = null
 let updateTimer = null
+let startupErrorHooked = false
+
+/** 任何启动期 JS 异常都不能让原生启动图一直挡在界面上。 */
+function hookStartupErrors() {
+  if (startupErrorHooked) return
+  startupErrorHooked = true
+  try {
+    if (typeof uni === 'undefined') return
+    if (typeof uni.onError === 'function') uni.onError(() => closeSplash())
+    if (typeof uni.onUnhandledRejection === 'function') {
+      uni.onUnhandledRejection(() => closeSplash())
+    }
+  } catch {
+    // 宿主没有这些接口时跳过。
+  }
+}
+
+/** 初始化失败也要让 App 继续挂载：页面自己会显示状态，不能停在白屏。 */
+function safeBootstrap() {
+  try {
+    bootstrap()
+  } catch (err) {
+    console.error('[pilot-client] 启动初始化失败', err)
+    closeSplash()
+  }
+}
 
 export default {
   onLaunch() {
-    bootstrap()
-    // 原生启动图等首屏渲染回调，启动页切走后可能收不到，这里错开时间点反复关。
-    cancelSplashGuard = installSplashGuard()
-    try {
-      if (typeof uni !== 'undefined' && typeof uni.onError === 'function') {
-        uni.onError(() => closeSplash())
-      }
-    } catch {
-      // 宿主没有这个接口时跳过。
-    }
+    // 先挂启动图兜底再初始化：bootstrap() 内部任何异常都不能导致兜底没挂上，
+    // 否则 alwaysShowBeforeRender 的原生启动图会一直盖在界面上（表现为白屏）。
+    if (!cancelSplashGuard) cancelSplashGuard = installSplashGuard()
+    hookStartupErrors()
+    safeBootstrap()
     // 静默检查更新：6 小时内只查一次，且只在真的拿到新版本时才提示。
     updateTimer = setTimeout(() => {
       autoCheckUpdate().catch(() => {})
     }, 3000)
   },
+  onShow() {
+    // 从后台回到前台：重新挂上兑底定时器并立刻清启动图（切后台时已取消）。
+    if (!cancelSplashGuard) cancelSplashGuard = installSplashGuard()
+    closeSplash()
+  },
   onHide() {
-    if (cancelSplashGuard) cancelSplashGuard()
+    if (cancelSplashGuard) {
+      cancelSplashGuard()
+      cancelSplashGuard = null
+    }
   },
   onUnload() {
-    if (cancelSplashGuard) cancelSplashGuard()
+    if (cancelSplashGuard) {
+      cancelSplashGuard()
+      cancelSplashGuard = null
+    }
     if (updateTimer) clearTimeout(updateTimer)
   }
 }
