@@ -2,7 +2,12 @@
 
 **English** | [中文](README.zh-CN.md)
 
-**Status: beta (preview).** Every published build is a test build: the feature set still changes
+> **Discontinued (2026-11).** The phone side is not built yet — it is a skeleton. Every capability
+> that needs an Android system service is still unimplemented. Official open-source distribution has
+> stopped: the site no longer offers a download, and this repository is no longer updated, released or
+> split out for publishing. The code stays as history and reference, not as a usable product.
+
+**Status: beta (discontinued).** Every published build is a test build: the feature set still changes
 between releases, and the capabilities that need an Android system service are not wired yet.
 Details in the beta note below.
 
@@ -11,7 +16,7 @@ Details in the beta note below.
 [![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
 [![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
 
-**Website & installers:** <https://pilot.medpilot.cc/#client-download> — screenshots, demo video and every download.
+**Website & installers:** taken down — no official download is offered any more.
 
 **Changelog:** [CHANGELOG.md](CHANGELOG.md) — what changed in each release, newest first.
 
@@ -134,6 +139,6 @@ permission each feature maps to, and why some very attractive features are inten
 
 ## License
 
-[Apache License 2.0](LICENSE), copyright 2026 rigongyizu. Keep the copyright notice and the
-[`NOTICE`](NOTICE) file, and state the changes in files you modified. Third-party components are
-listed in [`NOTICE`](NOTICE).
+[Apache License 2.0](../LICENSE), copyright 2026 rigongyizu. Keep the copyright notice and the
+[`NOTICE`](../NOTICE) file, and state the changes in files you modified. Third-party components are
+listed in [`NOTICE`](../NOTICE).
