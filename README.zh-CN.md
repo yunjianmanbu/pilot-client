@@ -2,15 +2,14 @@
 
 [English](README.md) | **中文**
 
-[![CI](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml/badge.svg)](https://github.com/yunjianmanbu/pilot-client/actions/workflows/ci.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/yunjianmanbu/pilot-client?color=blue)](https://github.com/yunjianmanbu/pilot-client/releases)
-[![Discussions](https://img.shields.io/badge/discussions-open-2ea44f.svg)](https://github.com/yunjianmanbu/pilot/discussions)
+> **已停用（2026-11）。** 被控端尚未落地，只是一个空壳：需要 Android 系统服务的能力都还没有实现。
+> 官方已停止对外开源与分发：官网不再提供下载入口，仓库不再更新、不再发版、不再建拆仓发行。
+> 本目录与源码留作历史与参考，不要当作可用产品。下面描述的是设计意图，不是现在能用的功能。
 
-**状态：Beta（测试版）。** 目前每个公开版本都是测试版：功能集合仍会随版本变化，
+**状态：Beta（已停用）。** 目前每个公开版本都是测试版：功能集合仍会随版本变化，
 需要 Android 系统服务的能力尚未接通。细节见下方 Beta 说明。
 
-**官网与下载：** <https://pilot.medpilot.cc/zh.html#client-download> —— 截图、演示视频与各平台安装包。
+**官网与下载：** 已下线，官方不再提供被控端下载。
 
 **更新记录：** [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md) —— 每个版本改了什么，最新的在最上面。
 
@@ -103,8 +102,10 @@ DCloud 的离线 appkey 校验 **appid + 包名 + 证书 SHA1** 三者同时匹�
 ```bash
 # 1. 用 HBuilderX CLI 生成 www（插件需为 5.34，与 Android-SDK@5.34 配套）
 "/d/soft/HBuilderX.4.24.2024072208/HBuilderX/cli.exe" publish app-android \
-  --type appResource --project "<仓库绝对路径>\pilot\mobile-client"
+  --type appResource --project "<仓库绝对路径>\pilot\pilot-client"
 # 产物：pilot/pilot-client/unpackage/resources/__UNI__3780DD8/www
+# 只改 pages/、lib/、App.vue 而版本号不变时，这一步会沿用旧 versionName；
+# 壳内容修复（如启动流程）必须同时抬 manifest.json 的 versionName/versionCode 再出 APK。
 
 # 2. 准备离线工程（确认自检表 www 项变 ✅）
 node pilot/scripts/prepare-client-android.mjs --force
@@ -142,6 +143,19 @@ node pilot/scripts/pack-client-wgt.mjs --shell 1.0.1
 端上的选择规则（`lib/update.js` 的 `resolveUpdateTarget`，与 Pilot Link 同一套）：**壳落后先装全量 APK**，
 壳跟上后才用 wgt。先装 wgt 会把运行版本顶到全量包的版本上，用户之后再也收不到原生修复。
 运行时要靠 zip4j 解压 wgt，所以 APK 工程必须有该依赖（`prepare-client-android.mjs` 自动补）。
+
+### 启动白屏：`App.vue` 的启动顺序不能反
+
+`manifest.json` 的 `app-plus.splashscreen` 是 `alwaysShowBeforeRender: true` + `autoclose: true`，
+原生启动图要等首屏渲染完成才自己撤，而这个回调在 `pages/launch` 立刻 `reLaunch` 时经常投递不到。
+所以全靠 `installSplashGuard()` 兜底关闭（300/1000/2500/5000ms 各试一次）。
+
+**`onLaunch` 里必须先挂兜底，再做初始化**；反过来写（`bootstrap()` 在前）时，
+`bootstrap()` 内部任何一次 `plus.*` 调用抛错都会让兜底永远挂不上，界面就只剩那张
+近全白（dark 像素 1858 / light 35370）的 `static/splash.9.png`，表现为「打开后一片空白」。
+现在 `App.vue` 的写法是：先 `installSplashGuard()` → 挂 `onError`/`onUnhandledRejection` →
+`safeBootstrap()`（try/catch，失败也 `closeSplash()`），并在 `onShow` 里补一次关闭。
+改这段时保留这四点，`test/splash.test.mjs` 只覆盖纯函数，覆盖不到这里的调用顺序。
 
 启动时会静默检查一次（6 小时节流），首页「版本」卡与 `pages/update` 都能手动检查、下载、安装；
 下载后先校验 SHA-256 再交给 `plus.runtime.install`。
@@ -196,5 +210,5 @@ node pilot/scripts/pack-client-wgt.mjs --shell 1.0.1
 
 ## 许可
 
-[Apache License 2.0](LICENSE)，版权归 2026 rigongyizu。你需要保留版权声明与 [`NOTICE`](NOTICE)
-文件，并在修改过的文件里注明改动。第三方组件见 [`NOTICE`](NOTICE)。
+[Apache License 2.0](../LICENSE)，版权归 2026 rigongyizu。你需要保留版权声明与 [`NOTICE`](../NOTICE)
+文件，并在修改过的文件里注明改动。第三方组件见 [`NOTICE`](../NOTICE)。
